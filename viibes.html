@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shawarma Vibes | Glovo Menu</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --text-main: #ffffff;
+      --text-muted: #fca5a5;
+      --red-bright: #ff2a2a;
+      --red-hover: #ef4444;
+      --glass-bg: rgba(45, 8, 12, 0.55);
+      --glass-border: rgba(255, 60, 60, 0.25);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(-45deg, #0d0102, #290306, #42060a, #1a0204);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 40px 20px 60px;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .top-right-logo {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      width: 75px;
+      height: 75px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 12px rgba(255, 42, 42, 0.6));
+      z-index: 10;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 60px auto 0;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 80px;
+      }
+      .top-right-logo {
+        width: 60px;
+        height: 60px;
+        top: 15px;
+        right: 15px;
+      }
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      box-shadow: var(--glass-shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 90, 90, 0.6);
+      box-shadow: 0 12px 40px rgba(220, 38, 38, 0.4);
+    }
+
+    .img-wrapper {
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover .card-img {
+      transform: scale(1.08);
+    }
+
+    .card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+      line-height: 1.35;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 10px;
+    }
+
+    .price-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .price {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--red-hover);
+      line-height: 1.1;
+    }
+
+    .old-price {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-decoration: line-through;
+      margin-top: 2px;
+    }
+
+    .order-btn {
+      background: linear-gradient(135deg, #ff2a2a, #991b1b);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .order-btn:hover {
+      background: linear-gradient(135deg, #ff5555, #dc2626);
+      transform: scale(1.05);
+      box-shadow: 0 0 14px rgba(255, 42, 42, 0.7);
+    }
+  </style>
+</head>
+<body>
+
+  <img src="logo.png" alt="Shawarma Vibes Logo" class="top-right-logo" onerror="this.style.display='none'">
+
+  <div class="container">
+    <main class="menu-grid" id="menu-grid"></main>
+  </div>
+
+  <script>
+    
+ const menuData = [
+  {
+    name: "Սեթ Վայբս խոզի",
+    desc: "Սեթ Վայբս խոզի ներառում է շաուրմա կլասիկ (4 կտոր), շաուրմա հալապենիոյովներ (4 կտոր), շաուրմա սմբուկով (4 կտոր),շաուրմա պանրային (4 կտոր), շաուրմա սնկով (2 կտոր), շաուրմա չիմիչուրիով (2 կտոր): Ընդհանուր քանակը 20 կտոր: Նագեթսներ (6 հատ), սոխի օղակներ (6 հատ), մոցարելայի ձողիկներ (4 հատ), ստրիպսեր (4 հատ), Ֆրի, սոուս վայբս, պանրային սոուս, կծու բարբեքյու, կետչուպ, չիմիչուրի",
+    price: "18 810,00 ֏\n20 900,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/f5180ed3-60f8-4bfd-adb6-2154319d103d.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ Վայբս հավի",
+    desc: "Սեթ Վայբս հավից ներառում է շաուրմա կլասիկ (4 կտոր), շաուրմա հալապենիոյով (4 կտոր), շաուրմա սմբուկով (4 կտոր), շաուրմա պանրային (4 կտոր), շաուրմա սնկով (2 կտոր), \u2028շաուրմա չիմիչուրիով (2 կտոր): Ընդհանուր քանակը 20 կտոր: Նագեթսներ (6 հատ), սոխի օղակներ (6 հատ), Մոցառելայի ձողիկներ (4 հատ), ստրիպսեր (4 հատ), Ֆրի, սոուս վայբս, սոուս պանրային սոուս, սոուս կծու բարբեքյու, կետչուպ, չիմիչուրի",
+    price: "18 630,00 ֏\n20 700,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/fd62365d-03cd-4a64-b709-c71172992871.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Բիգ\" խոզ",
+    desc: "Շաուրմա` -կլասիկ (2 կտոր) -սնկով (2 կտոր) -պանրային (4 կտոր) -սմբուկով (4 կտոր) -հալապենիոյով (4 կտոր) նագեթսներ (10 հատ) սոխի օղակներ (10 հատ) պանրային գնդիկներ (6 հատ) մոցառելայի ձողիկներ (6 հատ) ֆրի Սոուսներ 5 տեսակի",
+    price: "17 900,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/27614093786/3c77c8fb-9ffb-4643-abb0-d83fd2d030be.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Բիգ\" հավ",
+    desc: "Շաուրմա` -կլասիկ (2 կտոր) -սնկով (2 կտոր) -պանրային (4 կտոր) -սմբուկով (4 կտոր) -հալապենիոյով (4 կտոր) նագեթսներ (10 հատ) սոխի օղակներ (10 հատ) պանրային գնդիկներ (6 հատ) մոցառելայի ձողիկներ (6 հատ) ֆրի Սոուսներ 5 տեսակի",
+    price: "17 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/27614093387/7f2a8a42-3ed1-4dba-be11-bfca01ccaf73.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Մեգա Սփեշլ\" խոզի",
+    desc: "Շաուրմաներ 24 կտոր` -կլասիկ (4 կտոր) -հալապենիոյով (4 կտոր) -սմբուկով (4 կտոր) -պանրային (4 կտոր) -սնկով (4 կտոր) -չիմիչուրիով (4 կտոր) -ֆրի Սոուսներ` պանրային, վայբս, կծու բարբեքյու, կետչուպ, չիմիչուրիով",
+    price: "17 595,00 ֏\n20 700,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/45c78040-564b-43aa-9786-04d9a5c038e0.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Մեգա Սփեշլ\" հավի",
+    desc: "Շաուրմաներ 24 կտոր` -կլասիկ (4 կտոր) -հալապենիոյով (4 կտոր) -սմբուկով (4 կտոր) -պանրային (4 կտոր) -սնկով (4 կտոր) -չիմիչուրիով (4 կտոր) -ֆրի Սոուսներ` պանրային, վայբս, կծու բարբեքյու, կետչուպ, չիմիչուրիով",
+    price: "17 425,00 ֏\n20 500,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/3d09f79f-a73e-4339-b4f4-ed58fabb5dba.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Մեգամիքս\" խոզի շաուրմաներով",
+    desc: "Շաուրմաներ 12 կտոր` -կլասիկ (2 կտոր) -հալապենիոյով (2 կտոր) -սմբուկով (2 կտոր) -պանրային (2 կտոր) -սնկով (2 կտոր) -չիմիչուրիով (2 կտոր) Կլասիկ չիզբուրգեր մինի 3 հ. Չիքեն չիզբուրգեր մինի 3 հ. Ֆրի, ստրիպսեր 6 հ. Սոուսներ` պանրային, վայբս, կծու բարբեքյու, կետչուպ, չիմիչուրիով",
+    price: "16 915,00 ֏\n19 900,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/46d305d5-237a-46f1-a54e-42ba0899fbea.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Մեգամիքս\" հավի շաուրմաներով",
+    desc: "Շաուրմաներ 12 կտոր` -կլասիկ (2 կտոր) -հալապենիոյով (2 կտոր) -սմբուկով (2 կտոր) -պանրային (2 կտոր) -սնկով (2 կտոր) -չիմիչուրիով (2 կտոր) Կլասիկ չիզբուրգեր մինի 3 հ. Չիքեն չիզբուրգեր մինի 3 հ. Ֆրի, ստրիպսեր 6 հ. Սոուսներ` պանրային, վայբս, կծու բարբեքյու, կետչուպ, չիմիչուրիով",
+    price: "16 660,00 ֏\n19 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/a67bd492-d7dc-4cb9-9135-d29c10735dcd.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Միքս\" (խոզի շաուրմայով)",
+    desc: "Շաուրմա՝ կլասիկ (2 կտոր), սնկով (2 կտոր), պանրային (2 կտոր), սմբուկով (2 կտոր), հալապենիոյով (2 կտոր), նագեթսներ (10 հատ), սոխի օղակներ (10 հատ), Կլասիկ չիզբուրգեր (2 հատ), Չիքն չիզբուրգեր (2 հատ), ֆրի, սոուսներ",
+    price: "15 900,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/33827782083/5a458519-9eae-446a-ab4c-05a69743a4dd.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Միքս\" (հավի շաուրմայով)",
+    desc: "Շաուրմա՝ կլասիկ (2 կտոր), սնկով (2 կտոր), պանրային (2 կտոր), սմբուկով (2 կտոր), հալապենիոյով (2 կտոր), նագեթսներ (10 հատ), սոխի օղակներ (10 հատ), Կլասիկ չիզբուրգեր (2 հատ), Չիքն չիզբուրգեր (2 հատ), ֆրի, սոուսներ",
+    price: "15 700,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/33827815551/f08fdb97-8e64-4c74-aec9-61426a5c3134.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Շաուրմա\" խոզի շաուրմաներով",
+    desc: "Շաուրմաներ 20 կտոր` -կլասիկ (4 կտոր) -հալապենիոյով (4 կտոր) -սմբուկով (4 կտոր) -պանրային (4 կտոր) -սնկով (4 կտոր) Սոուսներ` պանրային, վայբս, կծու բարբեքյու, կետչուպ",
+    price: "13 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/38431532157/2105f4c8-dbfa-4794-abff-0b63b28f955a.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Շաուրմա\" հավի շաուրմաներով",
+    desc: "Շաուրմաներ 20 կտոր` -կլասիկ (4 կտոր) -հալապենիոյով (4 կտոր) -սմբուկով (4 կտոր) -պանրային (4 կտոր) -սնկով (4 կտոր) Սոուսներ` պանրային, վայբս, կծու բարբեքյու, կետչուպ",
+    price: "13 400,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/38431535612/81f60f5b-d080-4a49-b340-2229c9d591d9.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Խրթխրթան նոր\"",
+    desc: "Նագեթսներ 6 հ. Մոցառելայի ձողիկներ 6 հ. Պանրային գնդիկներ 6 հ. Սոխի օղակներ 6 հ. Ստրիպսեր 6 հ. Ֆրի 2 բաժին սոուսներ: Ֆիրմային, պանրային սոուս, կծու բարբեքյու, կետչուպ, չիմիչուրի",
+    price: "11 900,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/26223503459/3cd8c134-16a3-4f0f-9117-7ea7955401aa.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ Ֆրենդս խոզի շաուրմաներով",
+    desc: "- 8 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) - մինի Չիքեն չիզբուրգեր 2 հ. - մինի Կլասիկ չիզբուրգեր 2 հ. - Ֆրի, ստրիպսեր 4 հ. Սոուսներ` պանրային, վայբս, կծու բարբեքյու, կետչուպ, չիմիչուրի",
+    price: "11 730,00 ֏\n13 800,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/2ff0e2dd-ce9a-4cb2-a586-efcc85ad81dc.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ Ֆրենդս, հավի շաուրմաներով",
+    desc: "- մինի Չիքեն չիզբուրգեր 2 հ. - մինի Կլասիկ չիզբուրգեր 2 հ. - Ֆրի, ստրիպսեր 4 հ. Սոուսներ` պանրային, վայբս, կծու բարբեքյու, կետչուպ, չիմիչուրի",
+    price: "11 560,00 ֏\n13 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/b4fca76c-51c1-42e0-aad0-0aea36a63f75.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ Չիլ մուդ խոզի",
+    desc: "Սեթ Չիլ մուդ խոզի ներառում է շաուրմա կլասիկ (2 կտոր), շաուրմա հալապենիոյով (2 կտոր), շաուրմա սմբուկով (2 կտոր), շաուրմա պանրային (2 կտոր), շաուրմա սնկով (2 կտոր), շաուրմա չիմիչուրիով (2 կտոր): Ընդհանուր քանակը 12 կտոր: Ֆրի, ստրիպսեր (4 հատ), Սոուս` պանրային, սոուս վայբս, կծու բարբեքյու սոուս, կետչուպ, չիմիչուրի",
+    price: "10 965,00 ֏\n12 900,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/394fbf22-e7c9-4b55-a0f1-857f946b05dc.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ Սփեշլ բուրգեր խոզի շաուրմաներով",
+    desc: "- 10 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) - մինի Կլասիկ չիզբուրգեր 3 հ. - մինի Չիքեն չիզբուրգեր 3 հ. Սոուսներ` պանրային, վայբս, կծու բարբեքյու, կետչուպ, չիմիչուրի",
+    price: "10 880,00 ֏\n13 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/627f92d1-86e8-4434-a8c1-7ec00e2b692f.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ Չիլ մուդ հավի",
+    desc: "Սեթ Չիլ մուդ խոզի ներառում է շաուրմա կլասիկ (2 կտոր), շաուրմա հալապենիոյով (2 կտոր), շաուրմա սմբուկով (2 կտոր), շաուրմա պանրային (2 կտոր), շաուրմա սնկով (2 կտոր), շաուրմա չիմիչուրիով (2 կտոր): Ընդհանուր քանակը 12 կտոր: Ֆրի, ստրիպսեր (4 հատ), Սոուս` պանրային, սոուս վայբս, կծու բարբեքյու սոուս, կետչուպ, չիմիչուրի",
+    price: "10 795,00 ֏\n12 700,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/26ba4614-dd65-4b45-a09f-0f311513a2a3.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ Սփեշլ բուրգեր հավի շաուրմաներով",
+    desc: "- 10 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) - մինի Կլասիկ չիզբուրգեր 3 հ. - մինի Չիքեն չիզբուրգեր 3 հ. Սոուսներ` պանրային, վայբս, կծու բարբեքյու, կետչուպ, չիմիչուրի",
+    price: "10 720,00 ֏\n13 400,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/e6ca9c0b-4336-45c0-b71b-b6ffd726d0a7.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ “մինի Բուրգեր”",
+    desc: "- մինի Կլասիկ չիզբուրգեր 6 հ. - մինի Չիքն չիզբուրգեր 6 հ.",
+    price: "9 440,00 ֏\n11 800,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/f0567f74-8d92-4bcd-a533-13b0557b9f44.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Սփեշլ\" խոզ",
+    desc: "2x շաուրմա կլասիկ,1x շաուրմա սմբուկով,1x շաուրմա պանրային,1x շաուրմա շամպինիոններով,1x շաուրմա հալապենիոյով,ֆրի, կետչուպ,սոուսներ: ֆիրմային, թթու վարունգով, կծու բարբեքյու",
+    price: "8 900,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075837007/d34d2c31-ee22-42ab-b3db-a9b57132c9a0.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ “Տրիո” խոզ",
+    desc: "6 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) միջին Չիքեն չիզբուրգեր 3 հ. Ֆրի Սոուսներ` վայբս, կետչուպ",
+    price: "8 755,00 ֏\n10 300,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/cd108d75-6469-4860-814d-9c7dc0fb73bc.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Սփեշլ\" հավ",
+    desc: "2x շաուրմա կլասիկ,1x շաուրմա սմբուկով,1x շաուրմա պանրային,1x շաուրմա շամպինիոններով,1x շաուրմա հալապենիոյով,ֆրի, կետչուպ,սոուսներ: ֆիրմային, թթու վարունգով, կծու բարբեքյու",
+    price: "8 700,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075837208/d99fab8c-a333-4d60-a975-faab62ba0e55.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ “Տրիո” հավ",
+    desc: "6 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) միջին Չիքեն չիզբուրգեր 3 հ. Ֆրի, Սոուսներ` վայբս, կետչուպ",
+    price: "8 670,00 ֏\n10 200,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/41a9734e-3f60-4700-937d-c45ec04ad071.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Բուրգեր\"",
+    desc: "2x չիքն չիզբուրգեր,2x կլասիկ չիզբուրգեր,ֆրի, կետչուպ",
+    price: "6 500,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/22075837006/a23bd6bc-57fd-41e9-8a1b-e4224e5ed01f.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Երկուսի համար\" (խոզի շաուրմայով)",
+    desc: "2x խոզի կլասիկ շաուրմա, 2x չիքն չիզբուրգեր, ֆրի, կետչուպ",
+    price: "5 900,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/25428512504/b310b138-5c6f-4e1a-8b90-a0485ee95d48.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Դաբլ միքս\" խոզ",
+    desc: "- 4 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) - մինի Չիքեն չիզբուրգեր 2 հ. - ստրիպսեր 2 հ. - ֆրի, Վայբս սոուս",
+    price: "5 800,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/88acf659-d444-4444-8f0b-289ccb6cc22f.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Երկուսի համար\" (հավի շաուրմայով)",
+    desc: "2x hավի կլասիկ շաուրմա, 2x չիքն չիզբուրգեր,ֆրի, կետչուպ",
+    price: "5 800,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075837003/ac9f4f31-f076-4b3b-b418-e312f0b682c1.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Դաբլ միքս\" հավ",
+    desc: "- 4 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) - մինի Չիքեն չիզբուրգեր 2 հ. - ստրիպսեր 2 հ. - ֆրի, Վայբս սոուս",
+    price: "5 700,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/a9408617-9b87-4be9-a168-a1b9d9e089cb.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Խրթխրթան\" փոքր",
+    desc: "Նագեթսներ 4 հ. Մոցառելայի ձողիկներ 4 հ. Պանրային գնդիկներ 4 հ. Սոխի օղակներ 4 հ. Ֆրի սոուսներ: ֆիրմային, պանրային սոուս, կծու բարբեքյու, կետչուպ",
+    price: "5 300,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/27055156902/5e68b50a-7378-49da-8d47-9791244310af.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Մինի միքս\" խոզի շաուրմաներով",
+    desc: "- 2 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) - մինի Չիքեն չիզբուրգեր - ֆրի, Վայբս սոուս",
+    price: "3 900,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/5221c17b-4249-4f93-b38d-b5df27e3bd0e.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Մինի միքս\" հավի շաուրմաներով",
+    desc: "- 2 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) - մինի Չիքեն չիզբուրգեր - ֆրի, Վայբս սոուս",
+    price: "3 800,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/PRODUCT/920fad3f-5443-4dcf-8f86-4b71987e1a5e.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Քո համար\" խոզ",
+    desc: "- 4 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) - ֆրի, Վայբս սոուս",
+    price: "3 700,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/2d275253-9baa-4a4e-90d9-631a5149c46a.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Սեթ \"Քո համար\" հավի",
+    desc: "- 4 կտոր շաուրմա (տեսակը` Ձեր ընտրությամբ) - ֆրի, Վայբս սոուս",
+    price: "3 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/85ba388e-72a9-4718-b198-a4f2333a75ce.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Շաուրմա պանրով խոզ",
+    desc: "",
+    price: "2 200,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/22075846040/be71fbf4-d440-4287-a009-b5d19d5d9d6b.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Շաուրմա պանրով հավ",
+    desc: "",
+    price: "2 100,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/22075837002/133b8dbf-7017-4a20-9470-87a112796bba.jpg"
+  },
+  {
+    name: "Շաուրմա շամպինիոներով խոզ",
+    desc: "",
+    price: "2 100,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075840823/4eff7cf5-53a6-49de-8990-322599ee590b.jpg"
+  },
+  {
+    name: "Շաուրմա շամպինիոներով հավ",
+    desc: "",
+    price: "2 000,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075840823/4eff7cf5-53a6-49de-8990-322599ee590b.jpg"
+  },
+  {
+    name: "Շաուրմա հալապենիոյով խոզ",
+    desc: "",
+    price: "2 100,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/22075845636/80531c79-9692-4c63-a25b-6cd9d2138a0a.jpg"
+  },
+  {
+    name: "Շաուրմա հալապենիոյով հավ",
+    desc: "",
+    price: "2 000,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/22075845636/80531c79-9692-4c63-a25b-6cd9d2138a0a.jpg"
+  },
+  {
+    name: "Շաուրմա սմբուկով խոզ",
+    desc: "",
+    price: "2 100,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/22075845638/ab739315-92d0-444e-a7cb-34269a8c5d38.jpg"
+  },
+  {
+    name: "Շաուրմա սմբուկով հավ",
+    desc: "",
+    price: "2 000,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/22075845638/ab739315-92d0-444e-a7cb-34269a8c5d38.jpg"
+  },
+  {
+    name: "Շաուրմա ֆիթնես",
+    desc: "",
+    price: "1 800,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/41507166346/5c0a9417-eeb3-479a-a7cd-31ee5767cf7a.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Շաուրմա կլասիկ խոզ",
+    desc: "",
+    price: "1 700,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075836601/c66af3a7-e753-4531-95d4-0d0207fd82f6.jpg"
+  },
+  {
+    name: "Շաուրմա կլասիկ հավ",
+    desc: "",
+    price: "1 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075836601/c66af3a7-e753-4531-95d4-0d0207fd82f6.jpg"
+  },
+  {
+    name: "Շաուրմա ֆալաֆելով",
+    desc: "",
+    price: "1 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/26223432481/6639e503-5a53-4f2f-9169-72c4457cff9d.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Թվիսթեր հավի կրծքամիսով",
+    desc: "",
+    price: "1 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/40778986909/2b019493-580a-4bf4-acc7-0e5c306a26f9.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Կլասիկ չիզբուրգեր մեծ",
+    desc: "",
+    price: "2 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075837409/a41e42d3-06b0-46cc-83b0-3532dadeb461.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Չիքն չիզբուրգեր մեծ",
+    desc: "",
+    price: "2 400,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075837411/972ce64f-3fb7-443b-96fb-f4290ad093c1.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Բուրգեր հալապենիոյով մեծ",
+    desc: "",
+    price: "2 000,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/12329b09-2a06-4d8d-aa50-c913be8ebb2a.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Բուրգեր հալապենիոյով փոքր",
+    desc: "",
+    price: "1 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/169ffb7f-7e5d-4465-8806-04e976d1f79a.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Կլասիկ չիզբուրգեր փոքր",
+    desc: "",
+    price: "1 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075837410/25be6f26-f867-42f3-bd6a-816c2c9e4498.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Չիքն չիզբուրգեր փոքր",
+    desc: "",
+    price: "1 400,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/product/22075837613/755b9e7c-cab1-4443-a6ef-9c96470d68d7.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Չիքեն Ֆրայզ պանրով",
+    desc: "",
+    price: "2 400,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/33827832869/0d7ed211-46d4-4a21-9013-b5203eeda899.jpg"
+  },
+  {
+    name: "Չիքեն Ֆրայզ հալապենյոյով",
+    desc: "",
+    price: "2 200,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/33827833057/2482914d-ae60-4edd-9ace-1a0645159016.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Չիքեն Ֆրայզ կլասիկ",
+    desc: "",
+    price: "2 100,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/33827832869/0d7ed211-46d4-4a21-9013-b5203eeda899.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Կեսար աղցան",
+    desc: "",
+    price: "1 700,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/26223568224/c24e1e00-d0e0-4f4d-a18b-20e511ee51a7.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Հունական աղցան",
+    desc: "",
+    price: "1 600,00 ֏",
+    img: "https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/875074/product/26223562628/1fc81b68-c8ad-4821-9464-01e2463fbbaf.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Թթու վարունգով սոուս",
+    desc: "",
+    price: "400,00 ֏",
+    img: "https://glovo.dhmedia.io/image/menus-glovo/products/104a97129e94d8bb3165e70af6b3bdfc5b012f3ee6b54f5b53cdf71a0b5ec3b9?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  },
+  {
+    name: "Կծու Բարբեքյու սոուս",
+    desc: "",
+    price: "400,00 ֏",
+    img: "https://glovo.dhmedia.io/image/menus-glovo/products/4e09d2b6ace4203e3b83cc5a0085c2b946349aadaa5d49da567b26d0410f696f"
+  },
+  {
+    name: "Չեդդեր պանրով սոուս",
+    desc: "",
+    price: "400,00 ֏",
+    img: "https://glovo.dhmedia.io/image/menus-glovo/products/b4d7b8e217f1954bcb2bfe0c6cdc91b1ef990f8f39da7e607fe140263910c991?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+  }
+];0
+    function renderMenu() {
+      const grid = document.getElementById('menu-grid');
+      if (!grid) return;
+
+      grid.innerHTML = menuData.map(item => {
+        const prices = item.price.split('\n');
+        const currentPrice = prices[0];
+        const oldPrice = prices[1] ? prices[1] : null;
+
+        const priceHTML = oldPrice 
+          ? `<div class="price-container">
+               <span class="price">${currentPrice}</span>
+               <span class="old-price">${oldPrice}</span>
+             </div>`
+          : `<span class="price">${currentPrice}</span>`;
+
+        return `
+          <div class="card">
+            <div class="img-wrapper">
+              <img src="${item.img}" alt="${item.name}" class="card-img" loading="lazy" onerror="this.onerror=null; this.src='https://glovo.dhmedia.io/image/global-menu-service/GV_AM/vendor/641471/PRODUCT/12329b09-2a06-4d8d-aa50-c913be8ebb2a.jpg';">
+            </div>
+            <div class="card-body">
+              <h4 class="card-title">${item.name}</h4>
+              <div class="card-footer">
+                ${priceHTML}
+                <a href="https://glovoapp.com/am/en/yerevan/shawarma-vibes-yev/" target="_blank" class="order-btn">
+                  Glovo <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', renderMenu);
+  </script>
+</body>
+</html>
